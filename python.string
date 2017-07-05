@@ -1,0 +1,76 @@
+        今天向大家介绍python中string模块的功能以及使用方法
+        首先导入string模块:import string
+        使用dir(string)来查看string中都有哪些类，方法，及变量
+        变量{ascii_letters,ascii_lowercase,ascii_uppercase,capwords,digits,hexdigits
+            ,otcdigits,printable,punctuation,whitespace}
+        输入如下代码
+        string.ascii_letters:输出'a-zA-Z' 也就是所有英文字母的大小写
+        string.printable:输出所有可打印的字符
+        string.ascii_lowercase,string.ascii_uppercase 分别输出小写，大写英文字母
+        string.digits,string.hexdigits,otcdigits 分别输出十进制数，十六进制数，八进制数
+            string.punctuation输出标点符号
+            string.whitespace输出所有占位符
+        让我们来写一个简单的小程序
+        生成任意长度回文
+        import string
+        import random //随机函数
+        import sys //获取命令行中的参数
+        def palindrome(length):
+        a = string.ascii_letters
+        result = ''        length = int(length) //将输入的length转换为int类型
+        for i in len(length // 2):
+            result.append(random.choice(a))
+                if length % 2 != 0:
+                   result.append(random.choice(a))
+                   recv = result[-2::-1]
+                else:
+                   recv = result[-1::-1]
+                result = result + recv
+        return result
+
+        if __name__ == '__main__':
+            print('Ha we get a palindrome:{}'.format(palindrome(sys.argv[1])))
+    生成一个随机密码
+        import string
+        import random
+        def product_password(length,key):
+            length = int(length)
+            result = ''
+            for _ in range(length):
+                result += random.choice(string.printable)
+            cache = {}
+            cache[key] = result
+            with open('password.txt','w+') as fin:
+                fin.write('The {}'s password is :{}'.format(key,result))
+            return cache
+    
+    使用标点符号生成随机表情
+  
+        import string
+        import random
+
+        def product_emoj(length):
+            length = int(length)
+            cache = set()
+            for _ in range(20):
+                res = ''
+                for i in range(length):
+                    res += random.choice(string.punctuation)
+                if not (res in cache):
+                    cache.add(res)
+            return cache
+            
+            说到这里就不得不说一下str.format了，str是str类:例如'hello,wolrd'.format
+            他的基本格式是:'{}'.format,他的用法很简单：
+            In: print('hello,{}'.format('Tom'))
+            Out: hello,Tom
+           
+            In: print('{0},{1},{0}').format(1,2))
+            Out: 1,2,1
+            其中0和1是索引号就像数组中的X[0]，X[1]
+            
+            创建一个字典:a = {'cat':'Tom','mouse':'Jerry'}
+            In: print('{0['cat']},{0['mouse']}'.format(a))
+            Out: Tom,Jerry
+            更多详细用法可查阅标准文献 docs.python.org
+        
