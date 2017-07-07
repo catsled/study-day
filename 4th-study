@@ -1,0 +1,157 @@
+  在前面的学习中遇到了group()函数,怎么来的呢?
+
+   其实它是MatchObject的一个方法
+
+   想要得到这个类，我们可以调用
+
+   re.match()
+   re.search()
+   re.finditer()
+
+ -------------------------------------------------------------------------------
+
+   获得了这个类以后我们能用他来做什么呢？
+
+   现在先通过一些方法的使用来探索它的具体用途吧.
+
+   为了方便描述，将MatchObject 表示为 match
+ --------------------------------------------------------------------------------
+   match.group([,group1]) (tips:方括号的意思是表示方括号内的参数是可选的)
+
+
+   通过一个例子测试一下:
+
+   pattern = re.compile(r'(\w+) (\w+)')
+   string = 'Steve Jobs'
+   a = re.match(pattern,string)
+
+   IN:a.group()
+   OUT: 'Steve Jobs'
+
+   IN:a.group(0)
+   OUT: 'Steve Jobs'
+   由此看来，如果group内没有参数或者参数值为0，那么将会返回所有匹配值
+
+   IN:a.group(1)
+   OUT:'Steve'
+
+   IN:a.group(2)
+   OUT:'Jobs'
+
+   到这里可能会觉得group会返回匹配的字符，但是这些参数的具体意义是什么呢?
+
+   通过下面这个例子:
+
+   pattern1 = re.compile(r'(\w+)\n(\w+)')
+   pattern2 = re.compile(r'(\w+)(\n)(\w+)')
+
+   string = 'Steve\nJobs'
+
+   a1 = re.match(pattern1,string)
+
+   IN:a1.group(1),a1.group(2),a1.group(3)
+   OUT:'Steve','Jobs'，Error
+
+   a2 = re.match(pattern2,string)
+
+   IN:a2.group(1),a2.group(2),a2.group(3)
+   OUT:'Steve','\n','Jobs'
+
+   通过对比可以初步推断出match.group(group1,..) 会返回带括号的匹配值.
+
+   现在来使用一个小技巧
+
+   pattern = re.compile(r'(?P<first>\w+) (?P<second>\w+)')
+   string = 'Steve Jobs'
+
+   a = re.match(pattern,string)
+
+   IN:a.group('first','second')
+   OUT:'Steve','Jobs'
+
+   为什么会这样呢？
+   原因在于?P<first>为他所在匹配位置加上了一个标签：first
+   同样的?P<second>也为他所在的位置加上了一个标签:second
+
+------------------------------------------------------------------------------------
+
+   match.groups([default])
+   这个方法就是将所有匹配到的字符串以元组的方式返回
+
+   pattern = re.compile(r'(\w+) (\w+)')
+   string = 'Steve Jobs'
+   a = re.match(pattern,string)
+
+   IN:a.groups()
+   OUT: ('Steve','Jobs')
+
+---------------------------------------------------------------------------------
+
+   match.groupdict([dict])
+   这个方法有什么用呢?
+
+   例:
+    pattern = re.compile(r'(\w+) (\w+)')
+    string = 'Steve Jobs'
+
+    a = re.match(pattern,string)
+
+    IN:a.groupdict()
+    OUT: {}
+
+    这个方法看起来貌似没有什么用处,但是这样呢:
+
+    pattern = re.compile(r'(?P<first>\w+) (?P<second>\w+)')
+    string = 'Steve Jobs'
+    a = re.match(pattern,string)
+
+    IN: a.groupdict()
+    OUT:{'first':'Steve','second':'Jobs'}
+
+    现在可以确定，如果被匹配的字符串被打上标签了，那么调用match.groupdict()将会
+    返回一个以{标签:匹配值}的字典.
+
+---------------------------------------------------------------------------------
+
+    match.start([group]) && match.end([group])
+    这两个方法非常简单，
+    他会返回一个索引的位置,具体细节通过一个例子展示
+
+    pattern = re.compile(r'(\w+) (\w+)')
+    string = 'Steve Jobs'
+
+    a = re.match(pattern,string)
+
+    IN:a.start(1),a.end(1)
+    OUT:(0,5)
+
+    IN:a.start(2),a.end(1)
+    OUT:(6,10)
+
+    现在具体细节就可以描述了，start会返回相应位置的匹配字符串的第一个字符的位置
+    end会返回相应位置的匹配字符串的最后一个字符的位置
+    1代表第一个匹配的字符串
+    2代表第二个匹配的字符串
+
+-------------------------------------------------------------------------------
+
+   match.span([group])
+   这个函数跟上边的match.start(),match.end()很像
+   调用它后会返回匹配位置的索引范围，也就是第一个字符的位置和最后一个字符的位置
+
+   例：
+
+   pattern = re.compile(r'(\w+) (\w+)')
+   string = 'Steve Jobs'
+
+   a = re.match(pattern,string)
+
+   IN:a.span(1)
+   OUT:（0，5）
+
+   IN：a.span(2)
+   OUT:(6,10)
+
+   IN:a.span()
+   OUT:(0,10)
+----------------------------------------------------------------------------------
