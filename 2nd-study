@@ -1,0 +1,56 @@
+   今天学习的是python中关于正则表达式的模块：re
+   正则表达式在日常编程中起着非常重要的作用，无论是爬虫，登陆验证...都需要使用正则表达式，那么如何
+   正确而有效的使用它是成为一个合格的编程者必不可少的技能.
+
+   来看一下re模块中有什么可用的函数
+   import re
+   dir（re） //查看re模块中所包含的信息
+   在这里现在能用到的函数有:compile,match,search,findall
+-----------------------------------------------------------------------------------
+   首先来了解一下compile的用法
+   re.compile(pattern,flags=0)
+   其中pattern就是我们要输入的正则表达式
+   flags现在只学习re.MULTILINE(具体用法将在下面演示)
+   例如:我们先来写个正则表达式  pattern = r'hello world'
+   将pattern代入re.compile
+   得到re.compile(r'hello')
+   令 pa = re.compile(r'hello')
+   使用type(pa) 查看pa目前的属性
+
+   这时使用re.match函数来进行匹配
+   re.match(pattern,string,flags=0)
+   例:re.match(pa,'hello world')
+   如果匹配成功，函数将会返回一个值，否则不会有任何提示
+   显然上面的例子会成功返回一个值，因为，'hello' 将会匹配'hello world'中的'hello'
+----------------------------------------------------------------------------------
+   但是如果这样呢:
+   re.match(pa,'world hello')
+   在我们的想象中这应该是可以匹配成功的，可是结果是无法匹配，因为re.match 只会匹配在开始位置的
+   字符串。
+
+   现在该怎么办，我们还可以使用re.search这个函数来匹配
+   re.search(pattern,string,flags=0)
+   1>re.search(r'hello','world hello')
+   2>re.search(r'hello','world hello hello')
+   由于search会遍历字符串并返回第一次匹配的位置,所以这次将匹配成功,并且1和2的结果是相同的
+-----------------------------------------------------------------------------------
+   如果想查找字符串中所有与pattern匹配的字符那么,re.findall就派上用处了
+   re.findall(pattern,string,flags=0)
+   re.findall(r'hello','world hello hello')
+   将会返回’world hello hello' 所有出现的'hello'
+-----------------------------------------------------------------------------------
+   现在有一个字符串string='<html><head>\n<html>\n<html>'
+   我想要找到所有的<html>
+   首先想到的就是使用re.findall
+   现在 pattern = re.compile(r'^<html>')
+   pattern.findall(string)
+   Oops 我们只找到了一个<html>
+   为什么呢？我想应该是除了第一个出现的<html>其他的<html>都是以\n开头的，现在
+   就需要使用compile的flags了:re.MULTILINE
+   pattern = re.compile(r'^<html>',re.MULTILINE)
+   pattern.findall('<html><head>\n<html>\n<html>')
+   现在就可以找到所有的<html>了
+
+
+   未完待续...
+
