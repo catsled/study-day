@@ -1,0 +1,99 @@
+ 上次学习了re模块中的compile,match,findall,search
+
+  这次要学习的是re.split,re.sub,re.finditer
+
+---------------------------------------------------------------------------------
+  在python中字符串分割非常常见,一般的用法是string.split(pattern)
+  但是现在使用re模块中的re.split来进行分割
+  re.split(pattern,string,maxsplit=0,flags=0)
+  其中pattern是需要分割的地方，string是需要分割的字符串,maxsplit是最大分割次数（如果不设置
+  将会分割所有匹配的地方),flags的用法使用re.IGNORECASE(忽略大小写)
+
+  现在有string = 'hellomyonameoiso'
+  要除掉'o'
+  最简单的用法就是re.split(r'o',string)
+  这时将会得到['hell','my','name','is']
+  如果想要不删除'o' 只需要这样
+  re.split(r'(o)',string)
+  这样就会得到['hell','o','my','o','name','o','is','o','']
+  当然也可以这样使用
+  pattern = re.compile(r'o')
+  pattern.split(string)
+  或者
+  pattern = re.compile(r'(o)')
+  pattern.split(string)
+
+  maxsplit
+  现在来测试一下maxsplit的效果
+
+  re.split(r'o',string,maxsplit=2)
+  得到结果['hell','my','nameoiso']
+  就是说这次字符串只被分割了两次，其余部分的字符串并没有被分割.
+
+  flags
+  flags = re.IGNORECASE
+
+  re.split(r'O',string,flags=re.IGNORECASE)
+  得到与re.split（'o',string)相同的结果
+  相应的re.split(r'o','hellOmyOnameOisO',flags=re.IGNORECASE)
+  也会返回相同的结果
+  由此推断那么，re.IGNORECASE将会忽略匹配字符串以及被匹配字符串中的大小写
+
+  Tips：由于re.IGNORECASE是一个数，为了避免与maxsplit冲突导致得不到正确的结果,在调用时
+  需要加上 flags=re.IGNORECASE
+
+  -------------------------------------------------------------------------------
+  re.sub 一看就是某个替换函数
+  re.sub(pattern,repl,string,count=0,flags=0)
+
+  同样的pattern就是要替换的字符模式,sting就是要替换的字符串,count就是要替换的个数(0代表所有的)
+  ,flags和之前
+  学习的一样
+  那么这个 repl 是什么，他有什么作用呢?
+  首先这个repl 可以是一个具体的字符串或者是一个函数.
+  当repl 是一个具体的字符串时，如果string中有与pattern中匹配的字符串那么匹配的地方将被 repl
+  替换
+
+  IN:re.sub(r'<html>','<but>','<html><head><html>')
+  OUT: <but><head><but>
+
+  当repl 是一个函数时
+  先来测试一下看看他有什么效果
+
+  def test_repl(matchobj):
+      return '<but>' if matchobj.group(0) == '<html>' else '<and>'
+      //matchobj是re.match返回的类型,matchobj.group()将会返回匹配到的值
+
+  IN:re.sub(r'<html>|<head>',test_repl,'<html><head><html>')
+  OUT:<but><and><but>
+
+  发生了什么?
+  根据test_repl可以猜测,pattern会先与string进行匹配,如果匹配成功则会返回以个matchobj类型
+  的值，并把这个值传入到test_repl中，test_repl会对这个传进来的值进行处理并返回我们想要的值.
+
+  现在来写一个有实际意义的代码：
+
+  string = '''<html>
+  <head>
+  <title>Hello</title>
+  </head>
+  <body>
+  </body>
+  </html>'''
+
+  re.sub(r'</?\w+>','',string)
+  这样的话我们就可以提取出'Hello'
+
+  -------------------------------------------------------------------------------
+
+  re.finditer类似于re.findall，只是re.finditer会返回一个迭代的match类型
+  re.finditer(pattern,string,flags=0)
+
+  具体使用:
+
+  a = re.finditer(r'a','abcdedaas')
+  a.next()
+
+  --------------------------------------------------------------------------------
+
+
