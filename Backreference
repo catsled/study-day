@@ -1,0 +1,68 @@
+  今天学习时遇到了 Backreference
+
+  那么什么是Backreference
+
+  下面通过一个例子来探索一下:
+
+  ----------------------------------------------------------------------------------
+
+  Backreference
+
+  pattern = re.compile(r'(\w+) \1(这个是数字)')
+
+  match = re.search(pattern,'hello hello world')
+
+  IN:match.groups()
+  OUT:(hello,)
+
+  现在还不够清晰:
+
+  pattern = re.compile(r'(\w+)-(\d+)-(\w+)')
+  res = pattern.sub(r'\3-\1-\2','a-1-b\nb-2-c\nc-3-d')
+
+  IN: res
+  OUT:b-a-1\nc-b-2\nd-c-3
+
+  根据这些例子的结果：
+  推断出\1代表第一个匹配的位置，\2代表第二个匹配的位置，\3代表第三个匹配的位置,
+  所以\n代表第n个匹配的位置.
+
+  ---------------------------------------------------------------------------------
+  还有一个更加简单明了的方式：
+
+  (?P<xxx>pattern)
+
+  这个在之前的学习中已经接触过了，他就是为匹配的字符打上一个标签
+
+  现在来看看他怎么更加简单明了：
+
+  pattern = re.compile(r'(?P<id>\d+)-(?P<country>\w+)')
+
+  string = '''1-Beijing
+  2-Zhengzhou
+  3-Chengdu'''
+
+  IN:res = pattern.sub(r'\g<country>-\g<id>',string)
+  OUT:Beijing-1\nZhengzhou-2\nChengdu-3
+
+  \g<label>可以使字符串的替换，查找更加明确清晰
+
+  当然还有另一种使用方法:
+
+  pattern = re.compile(r'(?P<id>\d+) (?P=id)')
+  他的结果与第一个例子是相同的.
+
+
+  至此:可以得到
+
+  use          synatx
+  ----------------------------------
+  compile      (?P=lable)
+  ----------------------------------
+  repl(sub)     \g<lable>
+  ----------------------------------
+  matchobj      match.group('lable')
+  ----------------------------------
+
+
+  ----------------------------------------------------------------------------------
