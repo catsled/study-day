@@ -1,0 +1,53 @@
+前面学习了look_ahead 现在来学习一下look_behind
+
+ look_behind就是如果前面的字符串已经被匹配了(并不获取)则匹配后面的字符串.
+
+ ----------------------------------------------------------------------------------
+
+ (?<=...)
+
+ 例:
+
+ pattern = re.compile(r'(?<=Tom\s)Jackson')
+
+ match = re.findall(pattern,'My name is Tom Jackson')
+
+ IN:match
+ OUT:['Jackson']
+
+ 那么如果前面的没有被匹配呢?
+
+ pattern = re.compile(r'(?<=Tom\s)Jackson')
+
+ match = re.findall(pattern,'My name is Toms Jackson')
+
+ IN:match
+ OUT:[]
+
+ 由这两个例子可以确定：(?<=...)的用法确实是这样的.
+ ---------------------------------------------------------------------------------
+ 与之对应的还有一个(?<!...)
+ 他是如果(?<!)里的内容不被匹配才匹配后面的字符串.
+
+ 例:
+
+ pattern = re.compile(r'(?<!Tom\s)Jackson')
+
+ match = re.findall(pattern,'Hello my name is Tom Jackson')
+
+ IN:match
+ OUT:[]
+
+ 显然由于前面匹配了'Tom '，导致后面的'Jackson'匹配失败
+
+ pattern = re.compile(r'(?<Toms\s)Jackson')
+
+ match = re.findall(pattern,'Hello my name is Toms Jackson')
+
+ IN:match
+ OUT:['Jackson']
+
+ 这次由于Toms!=Tom 所以匹配成功
+ ------------------------------------------------------------------------------------
+
+
