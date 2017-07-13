@@ -1,0 +1,108 @@
+ 对于前几日学习的正则表达式,现在进行一些练习
+
+ =============================================================================
+
+ 获取数据来源:
+
+ python -m SimpleHTTPServer
+
+ from urllib.request import urlopen
+
+ resource = urlopen('http://localhost:8000').readlines()
+
+ ===============================================================================
+
+ 制定目标:
+
+ 1.获取resource中的title文本
+
+ 2.获取resource中的所有超链接
+
+ 3.获取resource中的所有文本
+
+ =================================================================================
+
+ 1.
+ 首先展示一下<title>
+
+ title = <title>Directory listing for /</title>
+
+ 那么如何获取被title包裹的字符串呢?
+
+ 第一步:去除<title></title>标签
+ pattern = r'(?<=<title>)key(?=</tilte>)'
+
+ kye就是那一串字符,具体匹配格式:
+ key = r'(\w| |/)+'
+
+ 所以:
+ pattern = re.compile(r'(?<=<title>)(\w| |/)+(?=</title>)')
+
+ IN:result = pattern.search(title).group()
+ OUT:'Directory listing for /'
+
+ ==================================================================================
+
+ 2.
+ 展示超链接格式:
+
+ link = '<li><a href="xxxxx">xxxxxx</a>\n'
+
+ 同样的观察到超链接的url以'href='开头以其后面第一个'>'位置结束,双引号暂时不管
+
+ 那么具体格式应为:'(?<=(href=))("|\w|\.|\\)+(?=<)
+
+ 所以：
+ pattern = re.compile(rb'(?<=(href=))("|\w|\.|\\)+(?=<))
+
+ IN:
+    for value in urlopen(url).readlines():
+        try:
+            print(pattern.search(value).group())
+        except:
+            pass
+
+ OUT:
+    'Videos'
+    'Desktop'
+    ...
+    ...
+
+  ===================================================================================
+
+  3.
+  格式:
+  <title>xxxx</title>
+  .
+  .
+  .
+  <li><a href="xxxxx"/>content</a>\n
+
+  有了前面的分析结果可以很容易得到答案:
+
+  pattern = re.compile(rb'(?<=(<title>|herf=)(\w| |/|\.|\\)(?=(>|</title>))')
+
+  但是由于(?<=(...|...)) 其中可选字符串的长度必须相同,同样的(?=(...|...))也是一样的,所以
+  上面的pattern是错误的.
+
+  那么到底该如何解决这个问题.
+
+  通过观察,可以发现所有文本都是以'>'开头以'>'结尾
+  所以来我会继续尝试新的格式
+
+  pattern = re.compile(rb'(?<=>)(\w| |\.|/|\\)+(?=<)')
+
+  IN:
+      for value in html:
+          try:
+              print(pattern.search(value).group())
+          except:
+              pass
+
+  OUT:
+      'Directory listing for \'
+      .
+      .
+      .
+  这次的匹配结果是正确的
+
